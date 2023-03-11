@@ -14,6 +14,7 @@ const userSchema = Schema(
       type: String,
       required: [true, "Email is required"],
       unique: true,
+      lowercase: true,
     },
     subscription: {
       type: String,

@@ -5,11 +5,6 @@ const getCurrentUserData = async (req, res) => {
 
   const user = await User.findById(_id);
 
-  if (!user) {
-    const error = new Error("Not authorized");
-    error.status = 401;
-    throw error;
-  }
   const { email, subscription } = user;
 
   res.json({

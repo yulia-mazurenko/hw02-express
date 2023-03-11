@@ -8,18 +8,14 @@ const getAllContacts = async (req, res) => {
   const contacts = await Contact.find({ owner: _id })
     .skip(skip)
     .limit(Number(limit))
+    .find(favorite ? { favorite: JSON.parse(favorite) } : {})
     .populate("owner", "_id email phone");
-
-  let contactsFiltered;
-  favorite === "true"
-    ? (contactsFiltered = contacts.filter((item) => item.favorite === true))
-    : (contactsFiltered = contacts.filter((item) => item.favorite === false));
 
   res.json({
     status: "success",
     code: 200,
     data: {
-      result: favorite === undefined ? contacts : contactsFiltered,
+      result: contacts,
     },
   });
 };

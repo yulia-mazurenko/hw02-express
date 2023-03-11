@@ -44,8 +44,14 @@ const login = async (req, res) => {
   const { email, password, subscription = "starter" } = req.body;
   const user = await User.findOne({ email });
 
-  if (!user || !user.comparePassword(password)) {
-    const error = new Error("Email or password is wrong");
+  if (!user) {
+    const error = new Error(`No user with "${email}"`);
+    error.status = 401;
+    throw error;
+  }
+
+  if (!user?.comparePassword(password)) {
+    const error = new Error("Password is wrong");
     error.status = 401;
     throw error;
   }
@@ -72,13 +78,7 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   const { _id } = req.user;
-  const user = await User.findByIdAndUpdate(_id, { token: null });
-
-  if (!user) {
-    const error = new Error("Not authorized");
-    error.status = 401;
-    throw error;
-  }
+  await User.findByIdAndUpdate(_id, { token: null });
 
   res.status(204).json();
 };
