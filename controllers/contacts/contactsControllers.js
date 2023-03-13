@@ -1,7 +1,15 @@
-const { Contact } = require("../../models/contact");
+const { Contact } = require("../../models");
 
-const getAllContacts = async (_, res) => {
-  const contacts = await Contact.find();
+const getAllContacts = async (req, res) => {
+  const { _id } = req.user;
+  const { page, limit, favorite } = req.query;
+  const skip = (page - 1) * limit;
+
+  const contacts = await Contact.find({ owner: _id })
+    .skip(skip)
+    .limit(Number(limit))
+    .find(favorite ? { favorite: JSON.parse(favorite) } : {})
+    .populate("owner", "_id email phone");
 
   res.json({
     status: "success",
@@ -30,7 +38,9 @@ const getContactById = async (req, res) => {
 };
 
 const addContact = async (req, res) => {
-  const newContact = await Contact.create(req.body);
+  const { _id } = req.user;
+
+  const newContact = await Contact.create({ ...req.body, owner: _id });
 
   res.status(201).json({
     status: "success",

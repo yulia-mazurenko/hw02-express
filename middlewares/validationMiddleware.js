@@ -4,11 +4,9 @@ const validationMiddleware = (schema) => {
 
     if (error) {
       error.status = 400;
-      // const [errorField] = error.details[0].path;
-      // error.message = `missing required "${errorField}" field`;
-      // throw error;
-      next(error);
-      return;
+      const [errorField] = error.details[0].path;
+      error.message = `missing required "${errorField}" field`;
+      throw error;
     }
     next();
   };
