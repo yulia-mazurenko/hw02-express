@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
 
 const { User } = require("../../models");
 
@@ -15,11 +16,13 @@ const register = async (req, res) => {
     throw error;
   }
 
-  const newUser = new User({ email, subscription });
+  const avatarURL = gravatar.url(email);
+
+  const newUser = new User({ email, subscription, avatarURL });
   newUser.setPassword(password);
   newUser
     .save()
-    .then(({ email, subscription }) => {
+    .then(({ email, subscription, avatarURL }) => {
       res.status(201).json({
         status: "success",
         code: 201,
@@ -27,6 +30,7 @@ const register = async (req, res) => {
           user: {
             email,
             subscription,
+            avatarURL,
           },
         },
       });
