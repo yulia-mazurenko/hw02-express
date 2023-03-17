@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
+const bcrypt = require("bcryptjs");
 
 const { User } = require("../../models");
 
@@ -46,6 +47,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password, subscription = "starter" } = req.body;
+
   const user = await User.findOne({ email });
 
   if (!user) {
@@ -54,7 +56,8 @@ const login = async (req, res) => {
     throw error;
   }
 
-  if (!user?.comparePassword(password)) {
+  const isPasswordCompared = bcrypt.compareSync(password, user.password);
+  if (!isPasswordCompared) {
     const error = new Error("Password is wrong");
     error.status = 401;
     throw error;
@@ -65,6 +68,7 @@ const login = async (req, res) => {
   };
 
   const token = jwt.sign(payload, SECRET_KEY);
+
   res.json({
     status: "success",
     code: 200,
