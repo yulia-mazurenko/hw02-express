@@ -21,6 +21,10 @@ const userSchema = Schema(
       enum: ["starter", "pro", "business"],
       default: "starter",
     },
+    avatarURL: {
+      type: String,
+      required: true,
+    },
     token: String,
   },
   { versionKey: false, timestamps: true }
@@ -28,10 +32,6 @@ const userSchema = Schema(
 
 userSchema.methods.setPassword = function (password) {
   this.password = bcrypt.hashSync(password, 10);
-};
-
-userSchema.methods.comparePassword = function (password) {
-  return bcrypt.compareSync(password, this.password);
 };
 
 userSchema.post("save", handleSchemaValidationErrors);
