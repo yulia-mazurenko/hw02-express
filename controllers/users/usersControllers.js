@@ -3,6 +3,7 @@ const fs = require("fs/promises");
 const Jimp = require("jimp");
 
 const { User } = require("../../models");
+const { RequestError } = require("../../helpers");
 
 const getCurrentUserData = async (req, res) => {
   const { _id } = req.user;
@@ -32,9 +33,10 @@ const updateSubscription = async (req, res) => {
   );
 
   if (!isValidSubscrType) {
-    const error = new Error(`"${subscription}" is invalid subscription type`);
-    error.status = 400;
-    throw error;
+    throw new RequestError(
+      400,
+      `"${subscription}" is invalid subscription type`
+    );
   }
 
   const updatedSubscriptionContact = await User.findByIdAndUpdate(
@@ -44,9 +46,7 @@ const updateSubscription = async (req, res) => {
   );
 
   if (!updatedSubscriptionContact) {
-    const error = new Error(`User with id=${_id} not found`);
-    error.status = 404;
-    throw error;
+    throw new RequestError(404, `User with id=${_id} not found`);
   }
 
   res.json({

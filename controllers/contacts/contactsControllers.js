@@ -1,3 +1,4 @@
+const { RequestError } = require("../../helpers");
 const { Contact } = require("../../models");
 
 const getAllContacts = async (req, res) => {
@@ -24,9 +25,7 @@ const getContactById = async (req, res) => {
   const { contactId } = req.params;
   const contact = await Contact.findById(contactId);
   if (!contact) {
-    const error = new Error(`Contact with id=${contactId} not found`);
-    error.status = 404;
-    throw error;
+    throw new RequestError(404, `Contact with id=${contactId} not found`);
   }
   res.json({
     status: "success",
@@ -55,9 +54,7 @@ const removeContact = async (req, res) => {
   const { contactId: id } = req.params;
   const deletedContact = await Contact.findByIdAndRemove(id);
   if (!deletedContact) {
-    const error = new Error(`Contact with id=${id} not found`);
-    error.status = 404;
-    throw error;
+    throw new RequestError(404, `Contact with id=${id} not found`);
   }
 
   res.json({
@@ -77,9 +74,7 @@ const updateStatusContact = async (req, res) => {
   });
 
   if (!updatedContact) {
-    const error = new Error(`Contact with id=${id} not found`);
-    error.status = 404;
-    throw error;
+    throw new RequestError(404, `Contact with id=${id} not found`);
   }
   res.json({
     status: "success",
@@ -96,9 +91,7 @@ const updateContact = async (req, res) => {
     new: true,
   });
   if (!updatedContact) {
-    const error = new Error(`Contact with id=${id} not found`);
-    error.status = 404;
-    throw error;
+    throw new RequestError(404, `Contact with id=${id} not found`);
   }
   res.json({
     status: "success",
